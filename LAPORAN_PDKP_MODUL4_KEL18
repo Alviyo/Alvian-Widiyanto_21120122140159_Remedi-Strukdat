@@ -1,0 +1,79 @@
+#include <iostream>
+using namespace std;
+
+class Keuangan {
+    private:
+        float saldo;
+    public:
+        Keuangan() {
+            saldo = 0;
+        }
+
+        // Method untuk menambahkan pemasukan ke saldo
+        void tambah_pemasukan(float jumlah) {
+            saldo += jumlah;
+        }
+
+        // method untuk menambahkan pengeluaran dari saldo
+        void tambah_pengeluaran(float jumlah) {
+            saldo -= jumlah;
+        }
+
+        // Fungsi untuk menghitung saldo saat ini
+        float hitung_saldo() {
+            return saldo;
+        }
+};
+
+// Fungsi untuk menampilkan menu pilihan
+void tampilkan_menu() {
+    cout << "<<<<Pencatat Keuangan>>>>" << endl;
+    cout << "1. Pemasukkan" << endl;
+    cout << "2. Pengeluaran" << endl;
+    cout << "3. Lihat saldo" << endl;
+    cout << "4. Keluar" << endl;
+    cout << "<<<<<<<<<<<<=>>>>>>>>>>>>" << endl;
+}
+
+int main() {
+    Keuangan keuangan; // Membuat objek Keuangan
+
+    while (true) {
+        tampilkan_menu(); // Menampilkan menu pilihan
+        int pilihan;
+        cout << "Masukkan pilihan : ";
+        cin >> pilihan;
+
+        if (pilihan == 1) {
+            float jumlah;
+            cout << "Masukkan jumlah pemasukan: ";
+            cin >> jumlah;
+            keuangan.tambah_pemasukan(jumlah); // Memanggil fungsi tambah_pemasukan
+            cout << "Pemasukan berhasil ditambahkan!" << endl;
+        }
+
+        else if (pilihan == 2) {
+            float jumlah;
+            cout << "Masukkan jumlah pengeluaran: ";
+            cin >> jumlah;
+            keuangan.tambah_pengeluaran(jumlah); // Memanggil fungsi tambah_pengeluaran
+            cout << "Pengeluaran berhasil ditambahkan!" << endl;
+        }
+
+        else if (pilihan == 3) {
+            float saldo = keuangan.hitung_saldo(); // Memanggil fungsi hitung_saldo
+            cout << "Saldo Anda saat ini: " << saldo << endl;
+        }
+
+        else if (pilihan == 4) {
+            cout << "Terima kasih dan Sampai Jumpa di Lain Waktu" << endl;
+            break; // Keluar dari loop while
+        }
+
+        else {
+            cout << "Pilihan Anda tidak valid, mohon memasukkan pilihan yang benar." << endl;
+        }
+    }
+
+    return 0;
+}
