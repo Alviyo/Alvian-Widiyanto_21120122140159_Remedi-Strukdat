@@ -1,79 +1,157 @@
-#include <iostream>
-using namespace std;
+class Student:
+    def __init__(self, nim, name, ipk):
+        self.nim = nim
+        self.name = name
+        self.ipk = ipk
 
-class Keuangan {
-    private:
-        float saldo;
-    public:
-        Keuangan() {
-            saldo = 0;
-        }
+    def __lt__(self, other):
+        return self.nim < other.nim
 
-        // Method untuk menambahkan pemasukan ke saldo
-        void tambah_pemasukan(float jumlah) {
-            saldo += jumlah;
-        }
+    def __eq__(self, other):
+        return self.nim == other.nim
 
-        // method untuk menambahkan pengeluaran dari saldo
-        void tambah_pengeluaran(float jumlah) {
-            saldo -= jumlah;
-        }
+    def __repr__(self):
+        return f"Student({self.nim}, {self.name}, {self.ipk})"
 
-        // Fungsi untuk menghitung saldo saat ini
-        float hitung_saldo() {
-            return saldo;
-        }
-};
 
-// Fungsi untuk menampilkan menu pilihan
-void tampilkan_menu() {
-    cout << "<<<<Pencatat Keuangan>>>>" << endl;
-    cout << "1. Pemasukkan" << endl;
-    cout << "2. Pengeluaran" << endl;
-    cout << "3. Lihat saldo" << endl;
-    cout << "4. Keluar" << endl;
-    cout << "<<<<<<<<<<<<=>>>>>>>>>>>>" << endl;
-}
+class Node:
+    def __init__(self, key, color, left=None, right=None, parent=None):
+        self.key = key
+        self.color = color
+        self.left = left
+        self.right = right
+        self.parent = parent
 
-int main() {
-    Keuangan keuangan; // Membuat objek Keuangan
 
-    while (true) {
-        tampilkan_menu(); // Menampilkan menu pilihan
-        int pilihan;
-        cout << "Masukkan pilihan : ";
-        cin >> pilihan;
+class RedBlackTree:
+    def __init__(self):
+        self.NIL = Node(None, 'BLACK')
+        self.root = self.NIL
 
-        if (pilihan == 1) {
-            float jumlah;
-            cout << "Masukkan jumlah pemasukan: ";
-            cin >> jumlah;
-            keuangan.tambah_pemasukan(jumlah); // Memanggil fungsi tambah_pemasukan
-            cout << "Pemasukan berhasil ditambahkan!" << endl;
-        }
+    def insert(self, student):
+        new_node = Node(student, 'RED', self.NIL, self.NIL, self.NIL)
+        self._insert(new_node)
 
-        else if (pilihan == 2) {
-            float jumlah;
-            cout << "Masukkan jumlah pengeluaran: ";
-            cin >> jumlah;
-            keuangan.tambah_pengeluaran(jumlah); // Memanggil fungsi tambah_pengeluaran
-            cout << "Pengeluaran berhasil ditambahkan!" << endl;
-        }
+    def _insert(self, node):
+        y = None
+        x = self.root
 
-        else if (pilihan == 3) {
-            float saldo = keuangan.hitung_saldo(); // Memanggil fungsi hitung_saldo
-            cout << "Saldo Anda saat ini: " << saldo << endl;
-        }
+        while x != self.NIL:
+            y = x
+            if node.key < x.key:
+                x = x.left
+            else:
+                x = x.right
 
-        else if (pilihan == 4) {
-            cout << "Terima kasih dan Sampai Jumpa di Lain Waktu" << endl;
-            break; // Keluar dari loop while
-        }
+        node.parent = y
+        if y is None:
+            self.root = node
+        elif node.key < y.key:
+            y.left = node
+        else:
+            y.right = node
 
-        else {
-            cout << "Pilihan Anda tidak valid, mohon memasukkan pilihan yang benar." << endl;
-        }
-    }
+        if node.parent is None:
+            node.color = 'BLACK'
+            return
 
-    return 0;
-}
+        if node.parent.parent is None:
+            return
+
+        self._fix_insert(node)
+
+    def _fix_insert(self, node):
+        while node.parent.color == 'RED':
+            if node.parent == node.parent.parent.right:
+                uncle = node.parent.parent.left
+                if uncle.color == 'RED':
+                    node.parent.color = 'BLACK'
+                    uncle.color = 'BLACK'
+                    node.parent.parent.color = 'RED'
+                    node = node.parent.parent
+                else:
+                    if node == node.parent.left:
+                        node = node.parent
+                        self._right_rotate(node)
+                    node.parent.color = 'BLACK'
+                    node.parent.parent.color = 'RED'
+                    self._left_rotate(node.parent.parent)
+            else:
+                uncle = node.parent.parent.right
+                if uncle.color == 'RED':
+                    node.parent.color = 'BLACK'
+                    uncle.color = 'BLACK'
+                    node.parent.parent.color = 'RED'
+                    node = node.parent.parent
+                else:
+                    if node == node.parent.right:
+                        node = node.parent
+                        self._left_rotate(node)
+                    node.parent.color = 'BLACK'
+                    node.parent.parent.color = 'RED'
+                    self._right_rotate(node.parent.parent)
+
+            if node == self.root:
+                break
+
+        self.root.color = 'BLACK'
+
+    def _left_rotate(self, x):
+        y = x.right
+        x.right = y.left
+        if y.left != self.NIL:
+            y.left.parent = x
+
+        y.parent = x.parent
+        if x.parent is None:
+            self.root = y
+        elif x == x.parent.left:
+            x.parent.left = y
+        else:
+            x.parent.right = y
+
+        y.left = x
+        x.parent = y
+
+    def _right_rotate(self, y):
+        x = y.left
+        y.left = x.right
+        if x.right != self.NIL:
+            x.right.parent = y
+
+        x.parent = y.parent
+        if y.parent is None:
+            self.root = x
+        elif y == y.parent.left:
+            y.parent.left = x
+        else:
+            y.parent.right = x
+
+        x.right = y
+        y.parent = x
+
+    def inorder_walk(self, node):
+        if node != self.NIL:
+            self.inorder_walk(node.left)
+            print(f"{node.key} ({node.color})", end=" ")
+            self.inorder_walk(node.right)
+
+    def display_tree(self):
+        self.inorder_walk(self.root)
+        print()
+
+
+rb_tree = RedBlackTree()
+
+students = [
+    Student(2021001, "Viyo", 3.8),
+    Student(2021002, "Septi", 3.9),
+    Student(2021003, "Bob", 3.5),
+    Student(2021004, "Rina", 3.7),
+]
+
+for student in students:
+    rb_tree.insert(student)
+
+print("Red-Black Tree setelah penyisipan:")
+rb_tree.display_tree()
